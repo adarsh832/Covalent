@@ -147,11 +147,14 @@ const PostProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
-    if (!validateForm()) return;
-    
-    setLoading(true);
 
+    if (!userProfile) {
+      setError('User profile not loaded. Please wait and try again.');
+      return;
+    }
+
+    if (!validateForm()) return;
+    setLoading(true);
     try {
       const projectData = {
         ...formData,
@@ -166,14 +169,11 @@ const PostProject = () => {
         budgetMin: parseInt(formData.budgetMin),
         budgetMax: parseInt(formData.budgetMax)
       };
-
       await addDoc(collection(db, 'projects'), projectData);
       setSuccess(true);
-      
       setTimeout(() => {
         navigate('/dashboard');
       }, 2000);
-      
     } catch (error) {
       console.error('Error posting project:', error);
       setError('Failed to post project. Please try again.');
@@ -496,10 +496,10 @@ const PostProject = () => {
                 </Button>
                 <Button 
                   type="submit" 
-                  className="covalent-gradient text-white hover:opacity-90 px-8"
-                  disabled={loading}
+                  className="covalent-gradient text-white hover:opacity-90"
+                  disabled={loading || !userProfile}
                 >
-                  {loading ? 'Posting Project...' : 'Post Project'}
+                  {loading ? 'Posting...' : 'Post Project'}
                 </Button>
               </div>
             </form>
