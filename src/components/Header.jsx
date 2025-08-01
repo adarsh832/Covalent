@@ -14,11 +14,9 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full covalent-gradient flex items-center justify-center">
-              <span className="text-white font-bold text-sm">C</span>
-            </div>
-            <span className="text-2xl font-bold text-primary" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <Link to="/" className="flex items-center space-x-3 align-middle">
+            <img src="/logo.png" alt="Covalent Logo" className="w-12 h-12 rounded-full object-cover" />
+            <span className="text-2xl font-bold text-primary flex items-center" style={{ fontFamily: 'Playfair Display, serif' }}>
               Covalent
             </span>
           </Link>
