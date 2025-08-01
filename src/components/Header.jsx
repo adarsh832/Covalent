@@ -1,13 +1,27 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search, LogOut, User, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-border/50">
@@ -81,15 +95,35 @@ const Header = () => {
                 </Button>
               </>
             ) : (
-              <Link to="/dashboard">
-                <Avatar className="w-9 h-9 border-2 border-secondary hover:opacity-80 transition">
-                  {userProfile?.profileImage ? (
-                    <AvatarImage src={userProfile.profileImage} alt={userProfile.fullName || 'User'} />
-                  ) : (
-                    <AvatarFallback>{userProfile?.fullName ? userProfile.fullName[0] : 'U'}</AvatarFallback>
-                  )}
-                </Avatar>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="w-9 h-9 border-2 border-secondary hover:opacity-80 transition cursor-pointer">
+                    {userProfile?.profileImage ? (
+                      <AvatarImage src={userProfile.profileImage} alt={userProfile.fullName || 'User'} />
+                    ) : (
+                      <AvatarFallback>{userProfile?.fullName ? userProfile.fullName[0] : 'U'}</AvatarFallback>
+                    )}
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/manage-projects" className="flex items-center gap-2">
+                      <Settings className="w-4 h-4" />
+                      Manage Projects
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 text-destructive">
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
 
@@ -136,6 +170,16 @@ const Header = () => {
                   >
                     Manage Projects
                   </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-left text-foreground hover:text-secondary transition-colors duration-200 py-2 flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
                 </>
               )}
               {!currentUser && (
@@ -169,22 +213,6 @@ const Header = () => {
                     Sign Up
                   </Link>
                 </>
-              )}
-              {currentUser && (
-                <Link 
-                  to="/dashboard" 
-                  className="flex items-center gap-2 text-foreground hover:text-secondary transition-colors duration-200 py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Avatar className="w-7 h-7 border-2 border-secondary">
-                    {userProfile?.profileImage ? (
-                      <AvatarImage src={userProfile.profileImage} alt={userProfile.fullName || 'User'} />
-                    ) : (
-                      <AvatarFallback>{userProfile?.fullName ? userProfile.fullName[0] : 'U'}</AvatarFallback>
-                    )}
-                  </Avatar>
-                  Profile
-                </Link>
               )}
             </nav>
           </div>
